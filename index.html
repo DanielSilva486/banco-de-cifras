@@ -47,7 +47,7 @@
         .modal-content textarea { width: 100%; height: 200px; box-sizing: border-box; font-family: monospace; font-size: 14px; padding: 10px; border: 1px solid #444; border-radius: 4px; background-color: #333; color: #fff; }
         .btn-salvar { font-size: 16px; padding: 12px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; width: 100%; }
         .btn-salvar:disabled { background-color: #555; }
-        #status-salvar { margin-top: 15px; text-align: center; font-weight: bold; }
+        #status-salvar, #syncStatus { margin-top: 15px; text-align: center; font-weight: bold; }
         .close-button { position: absolute; top: 10px; right: 20px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #1e1e1e; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 10px 25px; box-sizing: border-box; font-size: 0.9em; color: #87CEFA; }
         .footer-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #87CEFA; transition: opacity 0.3s; }
@@ -101,13 +101,20 @@
             <div id="status-salvar"></div>
         </form>
     </div>
+
     <div id="helpModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2>Ajuda / Sobre o Aplicativo</h2>
             <p>Bem-vindo ao seu Banco de Cifras pessoal!...</p>
+            <hr>
+            <h3>Sincronização Offline</h3>
+            <p>Clique no botão abaixo para baixar todas as cifras para o seu dispositivo. Isso garantirá que todo o seu repertório funcione sem internet.</p>
+            <button id="syncAllBtn" class="btn-salvar">Sincronizar Todas as Cifras</button>
+            <p id="syncStatus"></p>
         </div>
     </div>
+    
     <footer>
         <a href="https://www.instagram.com/danielsoucristao/" target="_blank" class="footer-link">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0...z"/></svg>
@@ -119,6 +126,81 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSV-Fzdw7ne7ZDIpN9ysA6I7PNwMAiTBrXKVXDk1uroCqzWgt4MsliN7RTUG9kTBBx/exec";
+        // ... (resto das variáveis globais)
+
+        // =============================================================
+        // NOVA FUNÇÃO PARA SINCRONIZAR TODAS AS CIFRAS
+        // =============================================================
+        async function syncAllCifras() {
+            const syncBtn = document.getElementById('syncAllBtn');
+            const syncStatus = document.getElementById('syncStatus');
+
+            if (!navigator.onLine) {
+                syncStatus.textContent = 'Você precisa estar online para sincronizar.';
+                return;
+            }
+
+            syncBtn.disabled = true;
+            syncStatus.style.color = '#e0e0e0';
+            syncStatus.textContent = 'Iniciando sincronização...';
+
+            const musicasParaSincronizar = todasAsMusicas.filter(m => !m.cifra);
+            let baixadas = 0;
+            const totalParaBaixar = musicasParaSincronizar.length;
+            
+            if (totalParaBaixar === 0) {
+                syncStatus.textContent = 'Todas as cifras já estão salvas offline!';
+                syncBtn.disabled = false;
+                return;
+            }
+
+            for (const musica of musicasParaSincronizar) {
+                try {
+                    syncStatus.textContent = `Baixando ${baixadas + 1} de ${totalParaBaixar}: ${musica.titulo}`;
+                    
+                    const response = await fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musica.id)}`);
+                    if (!response.ok) throw new Error('Falha na resposta da rede');
+                    const data = await response.json();
+                    
+                    if (data.cifra) {
+                        const originalMusica = todasAsMusicas.find(m => m.id === musica.id);
+                        if (originalMusica) {
+                            originalMusica.cifra = data.cifra;
+                        }
+                    }
+                    baixadas++;
+                } catch (error) {
+                    console.error(`Falha ao baixar ${musica.titulo}:`, error);
+                    syncStatus.style.color = 'red';
+                    syncStatus.textContent = `Erro ao baixar ${musica.titulo}. Tente novamente.`;
+                    syncBtn.disabled = false;
+                    return; // Para a sincronização em caso de erro
+                }
+            }
+
+            // Salva o array completo e atualizado no cache local
+            localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas));
+            
+            syncStatus.style.color = 'green';
+            syncStatus.textContent = 'Sincronização completa! Todas as cifras estão disponíveis offline.';
+            syncBtn.disabled = false;
+        }
+
+
+        // --- O RESTANTE DO SCRIPT ---
+        // (O script que você já tem, com as funções buscarCifra, onSaveSuccess, etc., continua aqui, sem alterações)
+        // Apenas adicionamos o event listener para o novo botão.
+        document.getElementById('openHelpBtn').onclick = () => { 
+            document.getElementById('helpModal').style.display = 'block';
+            // Reseta o status da sincronização toda vez que abrir a ajuda
+            const syncStatus = document.getElementById('syncStatus');
+            syncStatus.textContent = '';
+            syncStatus.style.color = '#e0e0e0';
+            document.getElementById('syncAllBtn').disabled = false;
+        };
+        document.getElementById('syncAllBtn').addEventListener('click', syncAllCifras);
+        
+        // Colando o resto do seu script para garantir...
         const selectMusicas = document.getElementById('musicas-select');
         const displayCifra = document.getElementById('cifra-display');
         const searchInput = document.getElementById('searchInput');
@@ -130,93 +212,10 @@
         const speedSlider = document.getElementById('speedSlider');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const fullscreenContainer = document.getElementById('fullscreen-container');
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache');
-            if (cifrasEmCache) {
-                popularListaDeMusicas(JSON.parse(cifrasEmCache));
-            }
-            fetch(SCRIPT_URL + "?action=getMusicas")
-                .then(response => {
-                    if (!response.ok) throw new Error("Erro na rede ao buscar dados.");
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && Array.isArray(data)) {
-                        localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data));
-                        popularListaDeMusicas(data);
-                    }
-                })
-                .catch(error => {
-                    console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error);
-                });
-        });
-
-        // =============================================================
-        // FUNÇÃO buscarCifra() ATUALIZADA PARA LÓGICA OFFLINE
-        // =============================================================
-        function buscarCifra() {
-            stopScroll();
-            const musicaId = selectMusicas.value;
-            if (!musicaId || selectMusicas.options[0].textContent === 'Nenhum resultado encontrado') {
-                displayCifra.innerHTML = "Selecione uma música na lista de resultados.";
-                displayCifra.classList.add('loading');
-                return;
-            }
-
-            const musica = todasAsMusicas.find(m => m.id === musicaId);
-
-            if (musica && musica.cifra) {
-                mostrarCifra(musica);
-                return;
-            }
-
-            displayCifra.innerHTML = "Carregando cifra...";
-            displayCifra.classList.add('loading');
-            
-            fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (musica) {
-                        musica.cifra = data.cifra; 
-                        localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas));
-                    }
-                    mostrarCifra(data);
-                })
-                .catch(error => {
-                    tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." });
-                });
-        }
-        
-        // =============================================================
-        // FUNÇÃO onSaveSuccess() ATUALIZADA PARA CACHE OFFLINE
-        // =============================================================
-        function onSaveSuccess(response) {
-            const statusSalvar = document.getElementById('status-salvar');
-            if (response.status === "sucesso") {
-                statusSalvar.style.color = 'green';
-                statusSalvar.textContent = 'Cifra adicionada com sucesso!';
-                
-                // Adiciona a nova música ao array em memória e ATUALIZA O CACHE LOCAL
-                todasAsMusicas.push(response.novaMusica);
-                localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas));
-                
-                filtrarMusicas(); // Re-renderiza a lista com a nova música
-                
-                setTimeout(() => {
-                    document.getElementById('formModal').style.display = 'none';
-                    document.getElementById('novaCifraForm').reset();
-                    statusSalvar.innerHTML = '';
-                    document.getElementById('btnSalvar').disabled = false;
-                }, 2000);
-            } else {
-                onSaveFailure({ message: response.mensagem || 'Erro desconhecido.' });
-            }
-        }
-
-        // --- O RESTANTE DO SCRIPT ---
-        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/service-worker.js').then(reg => console.log('SW ok')).catch(err => console.error('SW falhou:', err)); }); }
+        document.addEventListener('DOMContentLoaded', () => { const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache'); if (cifrasEmCache) { popularListaDeMusicas(JSON.parse(cifrasEmCache)); } fetch(SCRIPT_URL + "?action=getMusicas").then(response => { if (!response.ok) throw new Error("Erro na rede ao buscar dados."); return response.json(); }).then(data => { if (data && Array.isArray(data)) { localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data)); popularListaDeMusicas(data); } }).catch(error => { console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error); }); });
+        function buscarCifra() { stopScroll(); const musicaId = selectMusicas.value; if (!musicaId || selectMusicas.options[0].textContent === 'Nenhum resultado encontrado') { displayCifra.innerHTML = "Selecione uma música na lista de resultados."; displayCifra.classList.add('loading'); return; } const musica = todasAsMusicas.find(m => m.id === musicaId); if (musica && musica.cifra) { mostrarCifra(musica); return; } displayCifra.innerHTML = "Carregando cifra..."; displayCifra.classList.add('loading'); fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`).then(response => response.json()).then(data => { if (musica) { musica.cifra = data.cifra; localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); } mostrarCifra(data); }).catch(error => { tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." }); }); }
         document.getElementById('novaCifraForm').onsubmit = (event) => { event.preventDefault(); const statusSalvar = document.getElementById('status-salvar'); const btnSalvar = document.getElementById('btnSalvar'); const dadosFormulario = { titulo: document.getElementById('inputTitulo').value, artista: document.getElementById('inputArtista').value, cifraBruta: document.getElementById('inputCifraBruta').value }; btnSalvar.disabled = true; statusSalvar.textContent = 'Salvando...'; fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(dadosFormulario) }).then(response => response.json()).then(data => { if (data.status === 'sucesso') { onSaveSuccess(data); } else { onSaveFailure({ message: data.mensagem || 'Erro desconhecido.' }); } }).catch(error => onSaveFailure(error)); };
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/service-worker.js').then(reg => console.log('SW ok')).catch(err => console.error('SW falhou:', err)); }); }
         function startScroll() { if (displayCifra.scrollHeight <= displayCifra.clientHeight) return; const speed = speedSlider.value; const intervalTime = 150 - (speed * 10); scrollInterval = setInterval(() => { if (displayCifra.scrollTop + displayCifra.clientHeight >= displayCifra.scrollHeight) { pauseScroll(); } else { displayCifra.scrollTop += 1; } }, intervalTime); playPauseBtn.innerHTML = '⏸️'; isScrolling = true; }
         function pauseScroll() { clearInterval(scrollInterval); playPauseBtn.innerHTML = '▶️'; isScrolling = false; }
         function stopScroll() { clearInterval(scrollInterval); scrollInterval = null; displayCifra.scrollTop = 0; playPauseBtn.innerHTML = '▶️'; isScrolling = false; }
@@ -225,6 +224,7 @@
         function renderizarLista(musicas) { document.getElementById('resultadosLabel').textContent = `Resultados (${musicas.length} de ${todasAsMusicas.length} músicas):`; selectMusicas.innerHTML = ''; if (musicas.length === 0) { const option = document.createElement('option'); option.textContent = 'Nenhum resultado encontrado'; selectMusicas.appendChild(option); } else { musicas.forEach(musica => adicionarOpcaoMusica(musica)); } buscarCifra(); }
         function filtrarMusicas() { const termo = searchInput.value.toLowerCase(); const musicasFiltradas = todasAsMusicas.filter(musica => { return musica.titulo.toLowerCase().includes(termo) || musica.artista.toLowerCase().includes(termo); }); renderizarLista(musicasFiltradas); }
         function adicionarOpcaoMusica(musica) { const option = document.createElement('option'); option.value = musica.id; option.textContent = `${musica.titulo} - ${musica.artista}`; selectMusicas.appendChild(option); }
+        function onSaveSuccess(response) { const statusSalvar = document.getElementById('status-salvar'); if (response.status === "sucesso") { statusSalvar.style.color = 'green'; statusSalvar.textContent = 'Cifra adicionada com sucesso!'; todasAsMusicas.push(response.novaMusica); localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); filtrarMusicas(); setTimeout(() => { document.getElementById('formModal').style.display = 'none'; document.getElementById('novaCifraForm').reset(); statusSalvar.innerHTML = ''; document.getElementById('btnSalvar').disabled = false; }, 2000); } else { onSaveFailure({ message: response.mensagem || 'Erro desconhecido.' }); } }
         function onSaveFailure(error) { const statusSalvar = document.getElementById('status-salvar'); statusSalvar.style.color = 'red'; statusSalvar.textContent = `Erro ao salvar: ${error.message}`; document.getElementById('btnSalvar').disabled = false; }
         function mostrarCifra(data) { displayCifra.innerHTML = ''; displayCifra.classList.remove('loading'); try { const cifraArray = JSON.parse(data.cifra); const regexAcorde = /\b[A-G](?:#|b)?(?:m|maj|dim|sus|aug|add|M|m7|M7|m9|m11|m13)?[0-9#b]*(?:\([0-9#b,]+\))?(?:\/[A-G](?:#|b)?)?\b/g; cifraArray.forEach(item => { const linhaDiv = document.createElement('div'); linhaDiv.className = 'cifra-linha'; const acordesDiv = document.createElement('div'); acordesDiv.className = 'acordes'; const acordesComEspacos = (item.acordes || ' ').replace(/ /g, '&nbsp;'); const acordesFormatados = acordesComEspacos.replace(regexAcorde, '<span class="acorde">$&</span>'); acordesDiv.innerHTML = acordesFormatados; const letraDiv = document.createElement('div'); letraDiv.className = 'letra'; letraDiv.textContent = item.letra || ' '; linhaDiv.appendChild(acordesDiv); linhaDiv.appendChild(letraDiv); displayCifra.appendChild(linhaDiv); }); } catch (e) { displayCifra.textContent = "Erro: A cifra não está no formato JSON correto."; } }
         function tratarErro(error) { console.error(error); displayCifra.textContent = `Ocorreu um erro: ${error.message}`; }
@@ -236,7 +236,6 @@
         fullscreenBtn.addEventListener('click', toggleFullScreen);
         document.getElementById('openModalBtn').onclick = () => { document.getElementById('formModal').style.display = 'block'; };
         document.querySelector('#formModal .close-button').onclick = () => { document.getElementById('formModal').style.display = 'none'; document.getElementById('novaCifraForm').reset(); document.getElementById('status-salvar').innerHTML = ''; };
-        document.getElementById('openHelpBtn').onclick = () => { document.getElementById('helpModal').style.display = 'block'; };
         document.querySelector('#helpModal .close-button').onclick = () => { document.getElementById('helpModal').style.display = 'none'; };
         window.onclick = (event) => { const formModal = document.getElementById('formModal'); const helpModal = document.getElementById('helpModal'); if (event.target == formModal) { formModal.style.display = 'none'; document.getElementById('novaCifraForm').reset(); document.getElementById('status-salvar').innerHTML = ''; } if (event.target == helpModal) { helpModal.style.display = 'none'; } };
     </script>
