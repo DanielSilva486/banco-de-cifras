@@ -14,10 +14,10 @@
         .title-group img { width: 90px; height: 90px; border-radius: 20px; object-fit: cover; }
         h1 { color: #ffffff; margin: 0; }
         h1 span { color: #3498db; }
-        .subtitle { font-size: 0.9em; font-family: 'Georgia', serif; color: #aaa; margin: 8px 0 0 0; padding-left: 105px; max-width: 450px; line-height: 1.4; }
+        .subtitle { font-size: 0.9em; font-family: 'Georgia', serif; color: #aaa; margin: 8px 0 0 0; padding-left: 105px; /* Ajustado para imagem de 90px + 15px de gap */ max-width: 450px; line-height: 1.4; }
         .header-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
         
-        /* ESTILO CORRIGIDO PARA OS BOTÕES DO CABEÇALHO */
+        /* ESTILO UNIFICADO PARA OS BOTÕES DO CABEÇALHO */
         .btn-header {
             border: none;
             padding: 10px 15px;
@@ -31,7 +31,7 @@
             justify-content: center;
             gap: 8px;
             color: white;
-            width: 100%; /* Força a mesma largura */
+            min-width: 180px; /* Garante uma largura mínima para ambos */
             box-sizing: border-box;
         }
         .btn-header svg { height: 1em; fill: white; }
@@ -40,7 +40,43 @@
         .btn-sync:disabled { background-color: #555; cursor: not-allowed; opacity: 0.7; }
         
         label { font-weight: 600; color: #bbb; display: block; margin-bottom: 5px; }
-        /* ... (resto do CSS sem alterações) ... */
+        select, input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border-radius: 5px; border: 1px solid #444; margin-top: 8px; box-sizing: border-box; background-color: #333; color: #fff; }
+        .search-group { margin-bottom: 20px; }
+        #fullscreen-container { position: relative; }
+        #cifra-display { margin-top: 10px; min-height: 150px; max-height: 75vh; overflow-y: auto; border: 1px solid #444; padding: 15px; background-color: #121212; border-radius: 5px; scroll-behavior: smooth; }
+        .cifra-linha { margin-bottom: 0.4em; }
+        .acordes { font-family: 'Roboto Mono', 'Courier New', Courier, monospace; font-weight: bold; font-size: 1.15em; line-height: 1.3; white-space: pre; margin-top: 0; margin-bottom: 0; }
+        .acorde { color: #3498db; }
+        .letra { font-family: 'Roboto Mono', 'Courier New', Courier, monospace; color: #e0e0e0; font-size: 1.1em; line-height: 1.3; margin-top: 0; margin-bottom: 0; }
+        .loading { text-align: center; padding: 20px; font-style: italic; color: #888; }
+        .scroll-controls { display: flex; align-items: center; gap: 15px; padding: 10px; background-color: #2a2a2a; border-radius: 5px; margin-top: 20px; border: 1px solid #444; }
+        .scroll-controls button { background-color: #555; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        .scroll-controls button:hover { background-color: #777; }
+        .scroll-controls label { margin: 0; color: #bbb; }
+        .scroll-controls input[type="range"] { flex-grow: 1; cursor: pointer; }
+        #fullscreen-container:fullscreen { background-color: #000; padding: 20px; box-sizing: border-box; overflow-y: auto; }
+        #fullscreen-container:fullscreen #cifra-display { height: 100%; max-height: 100%; border: none; background-color: transparent; color: #fff; }
+        #fullscreen-container:fullscreen .letra { color: #fff; }
+        #fullscreen-container:fullscreen .acorde { color: #3498db; }
+        #fullscreen-container:fullscreen .scroll-controls { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 2147483647; background-color: rgba(44, 62, 80, 0.7); border: 1px solid rgba(255, 255, 255, 0.2); }
+        #fullscreen-container:fullscreen .scroll-controls label { color: #fff; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7); }
+        .modal-content { background-color: #1e1e1e; border: 1px solid #444; margin: 5% auto; padding: 25px; width: 90%; max-width: 600px; border-radius: 8px; position: relative; }
+        .modal-title-group { display: flex; align-items: center; gap: 12px; margin-bottom: 25px; }
+        .modal-title-group svg { width: 28px; height: 28px; fill: #fff; }
+        .modal-content h2 { margin: 0; color: #fff; }
+        .modal-content p, .modal-content li { line-height: 1.6; color: #ccc; }
+        .modal-content .form-group { margin-bottom: 15px; }
+        .modal-content textarea { width: 100%; height: 200px; box-sizing: border-box; font-family: monospace; font-size: 14px; padding: 10px; border: 1px solid #444; border-radius: 4px; background-color: #333; color: #fff; }
+        .btn-salvar { font-size: 16px; padding: 12px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; width: 100%; }
+        .btn-salvar:disabled { background-color: #555; }
+        #status-salvar { margin-top: 15px; text-align: center; font-weight: bold; }
+        .close-button { position: absolute; top: 10px; right: 20px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+        footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #1e1e1e; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 10px 25px; box-sizing: border-box; font-size: 0.9em; color: #87CEFA; }
+        .footer-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #87CEFA; transition: opacity 0.3s; }
+        .footer-link:hover { opacity: 0.8; }
+        .footer-link svg { width: 24px; height: 24px; fill: currentColor; }
+        #openHelpBtn { background: none; border: none; color: #87CEFA; font-size: 1em; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -56,11 +92,151 @@
             <div class="header-actions">
                 <button id="openModalBtn" class="btn-header btn-add">Adicionar Nova Cifra</button>
                 <button id="syncAllBtn" class="btn-header btn-sync">
-                    <svg xmlns="http://www.w.3.org/2000/svg" viewBox="0 0 640 512"><path d="M537.6 226.6c4.1-10.7 6.4-22.4 6.4-34.6 0-53-43-96-96-96-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32c-63.6 0-116.4 43.1-131.2 100.2C98.4 128.9 74.5 128 48 128c-26.5 0-48 21.5-48 48s21.5 48 48 48h66.7C101.4 259.9 88 293.4 88 320c0 10.2 1.4 20.2 4.1 29.6-13.8 5.4-23.3 19.3-21.7 34.6 1.6 15.3 15.2 26.8 30.6 26.8H256v32c0 17.7 14.3 32 32 32s32-14.3 32-32V352h64c17.7 0 32-14.3 32-32s-14.3-32-32-32h-64v-32c0-11.2-3.4-21.7-9.4-30.6 30.9-10.9 53.4-40.3 53.4-74.8zM256 224c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M537.6 226.6c4.1-10.7 6.4-22.4 6.4-34.6 0-53-43-96-96-96-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32c-63.6 0-116.4 43.1-131.2 100.2C98.4 128.9 74.5 128 48 128c-26.5 0-48 21.5-48 48s21.5 48 48 48h66.7C101.4 259.9 88 293.4 88 320c0 10.2 1.4 20.2 4.1 29.6-13.8 5.4-23.3 19.3-21.7 34.6 1.6 15.3 15.2 26.8 30.6 26.8H256v32c0 17.7 14.3 32 32 32s32-14.3 32-32V352h64c17.7 0 32-14.3 32-32s-14.3-32-32-32h-64v-32c0-11.2-3.4-21.7-9.4-30.6 30.9-10.9 53.4-40.3 53.4-74.8zM256 224c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32z"/></svg>
                     Sincronizar Offline
                 </button>
             </div>
         </div>
+        <div class="search-group">
+            <label for="searchInput">Buscar por Música ou Artista:</label>
+            <input type="text" id="searchInput" placeholder="Digite aqui para filtrar..." disabled>
         </div>
+        <label for="musicas-select" id="resultadosLabel">Resultados:</label>
+        <select id="musicas-select" disabled><option>Carregando músicas...</option></select>
+        <div id="fullscreen-container">
+            <div class="scroll-controls">
+                <button id="playPauseBtn" title="Play/Pause">▶️</button>
+                <button id="stopBtn" title="Parar e Voltar ao Início">⏹️</button>
+                <label for="speedSlider">Velocidade:</label>
+                <input type="range" id="speedSlider" min="1" max="10" value="3">
+                <button id="fullscreenBtn" title="Tela Cheia">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" style="fill:white;"><path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c-17.7 0-32 14.3-32 32s14.3 32 32 32h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H64zM320 352c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V384c0-17.7-14.3-32-32-32H320zM416 32c-17.7 0-32 14.3-32 32v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32z"/></svg>
+                </button>
+            </div>
+            <div id="cifra-display" class="loading">Selecione uma música para ver a cifra.</div>
+        </div>
+    </div>
+    <div id="formModal" class="modal">
+        <form id="novaCifraForm" class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-title-group">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="fill: #fff;"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+                <h2>Adicionar Nova Cifra</h2>
+            </div>
+            <div class="form-group"><label for="inputTitulo">Nome da Música:</label><input type="text" id="inputTitulo" required></div>
+            <div class="form-group"><label for="inputArtista">Artista:</label><input type="text" id="inputArtista" required></div>
+            <div class="form-group"><label for="inputCifraBruta">Cole a cifra completa aqui:</label><textarea id="inputCifraBruta" required placeholder="Cole aqui a cifra..."></textarea></div>
+            <button type="submit" id="btnSalvar" class="btn-salvar">Salvar na Planilha</button>
+            <div id="status-salvar"></div>
+        </form>
+    </div>
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Ajuda / Sobre o Aplicativo</h2>
+            <p>Bem-vindo ao seu Banco de Cifras pessoal! Este aplicativo foi desenvolvido para que você possa guardar e acessar suas cifras de forma rápida e fácil.</p>
+            <p><b>Dica:</b> Para garantir que todas as suas cifras fiquem disponíveis sem internet, use o botão "Sincronizar Offline" na tela principal.</p>
+            <hr>
+            <p>Este é um sistema em versão de testes (DEMO 1.0). Se você tiver alguma sugestão ou encontrar algum problema, ficarei feliz em receber seu feedback através do Instagram. Obrigado por usar!</p>
+        </div>
+    </div>
+    <footer>
+        <a href="https://www.instagram.com/danielsoucristao/" target="_blank" class="footer-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9 26.3 26.2 58 34.4 93.9 36.2 37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+            <span>Daniel Silva</span>
+        </a>
+        <span>Versão DEMO 1.0</span>
+        <button id="openHelpBtn">Ajuda</button>
+    </footer>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSV-Fzdw7ne7ZDIpN9ysA6I7PNwMAiTBrXKVXDk1uroCqzWgt4MsliN7RTUG9kTBBx/exec";
+        const selectMusicas = document.getElementById('musicas-select');
+        const displayCifra = document.getElementById('cifra-display');
+        const searchInput = document.getElementById('searchInput');
+        let todasAsMusicas = [];
+        let scrollInterval = null;
+        let isScrolling = false;
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const speedSlider = document.getElementById('speedSlider');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const fullscreenContainer = document.getElementById('fullscreen-container');
+        const syncAllBtn = document.getElementById('syncAllBtn');
+
+        async function syncAllCifras() {
+            const statusLabel = document.getElementById('resultadosLabel');
+            const originalStatusText = statusLabel.textContent;
+            if (!navigator.onLine) {
+                statusLabel.textContent = 'Você precisa estar online para sincronizar.';
+                setTimeout(() => { statusLabel.textContent = originalStatusText; }, 3000);
+                return;
+            }
+            syncAllBtn.disabled = true;
+            statusLabel.style.color = '#e0e0e0';
+            const musicasParaSincronizar = todasAsMusicas.filter(m => !m.cifra);
+            let baixadas = 0;
+            const totalParaBaixar = musicasParaSincronizar.length;
+            if (totalParaBaixar === 0) {
+                statusLabel.textContent = 'Todas as cifras já estão salvas offline!';
+                syncAllBtn.disabled = false;
+                setTimeout(() => { renderizarLista(todasAsMusicas); }, 2000);
+                return;
+            }
+            for (const musica of musicasParaSincronizar) {
+                try {
+                    statusLabel.textContent = `Baixando ${baixadas + 1} de ${totalParaBaixar}: ${musica.titulo}`;
+                    const response = await fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musica.id)}`);
+                    if (!response.ok) throw new Error('Falha na resposta da rede');
+                    const data = await response.json();
+                    if (data.cifra) {
+                        const originalMusica = todasAsMusicas.find(m => m.id === musica.id);
+                        if (originalMusica) { originalMusica.cifra = data.cifra; }
+                    }
+                    baixadas++;
+                } catch (error) {
+                    console.error(`Falha ao baixar ${musica.titulo}:`, error);
+                    statusLabel.style.color = 'red';
+                    statusLabel.textContent = `Erro ao baixar ${musica.titulo}. Tente novamente.`;
+                    syncAllBtn.disabled = false;
+                    setTimeout(() => { renderizarLista(todasAsMusicas); }, 3000);
+                    return;
+                }
+            }
+            localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas));
+            statusLabel.style.color = 'green';
+            statusLabel.textContent = 'Sincronização completa!';
+            syncAllBtn.disabled = false;
+            setTimeout(() => { renderizarLista(todasAsMusicas); }, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache'); if (cifrasEmCache) { popularListaDeMusicas(JSON.parse(cifrasEmCache)); } fetch(SCRIPT_URL + "?action=getMusicas").then(response => { if (!response.ok) throw new Error("Erro na rede ao buscar dados."); return response.json(); }).then(data => { if (data && Array.isArray(data)) { localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data)); popularListaDeMusicas(data); } }).catch(error => { console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error); }); });
+        function buscarCifra() { stopScroll(); const musicaId = selectMusicas.value; if (!musicaId || selectMusicas.options[0].textContent === 'Nenhum resultado encontrado') { displayCifra.innerHTML = "Selecione uma música na lista de resultados."; displayCifra.classList.add('loading'); return; } const musica = todasAsMusicas.find(m => m.id === musicaId); if (musica && musica.cifra) { mostrarCifra(musica); return; } displayCifra.innerHTML = "Carregando cifra..."; displayCifra.classList.add('loading'); fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`).then(response => response.json()).then(data => { if (musica) { musica.cifra = data.cifra; localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); } mostrarCifra(data); }).catch(error => { tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." }); }); }
+        document.getElementById('novaCifraForm').onsubmit = (event) => { event.preventDefault(); const statusSalvar = document.getElementById('status-salvar'); const btnSalvar = document.getElementById('btnSalvar'); const dadosFormulario = { titulo: document.getElementById('inputTitulo').value, artista: document.getElementById('inputArtista').value, cifraBruta: document.getElementById('inputCifraBruta').value }; btnSalvar.disabled = true; statusSalvar.textContent = 'Salvando...'; fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(dadosFormulario) }).then(response => response.json()).then(data => { if (data.status === 'sucesso') { onSaveSuccess(data); } else { onSaveFailure({ message: data.mensagem || 'Erro desconhecido.' }); } }).catch(error => onSaveFailure(error)); };
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/service-worker.js').then(reg => console.log('SW ok')).catch(err => console.error('SW falhou:', err)); }); }
+        function startScroll() { if (displayCifra.scrollHeight <= displayCifra.clientHeight) return; const speed = speedSlider.value; const intervalTime = 150 - (speed * 10); scrollInterval = setInterval(() => { if (displayCifra.scrollTop + displayCifra.clientHeight >= displayCifra.scrollHeight) { pauseScroll(); } else { displayCifra.scrollTop += 1; } }, intervalTime); playPauseBtn.innerHTML = '⏸️'; isScrolling = true; }
+        function pauseScroll() { clearInterval(scrollInterval); playPauseBtn.innerHTML = '▶️'; isScrolling = false; }
+        function stopScroll() { clearInterval(scrollInterval); scrollInterval = null; displayCifra.scrollTop = 0; playPauseBtn.innerHTML = '▶️'; isScrolling = false; }
+        function toggleFullScreen() { if (!document.fullscreenElement && !document.webkitFullscreenElement) { if (fullscreenContainer.requestFullscreen) { fullscreenContainer.requestFullscreen(); } else if (fullscreenContainer.webkitRequestFullscreen) { fullscreenContainer.webkitRequestFullscreen(); } else if (fullscreenContainer.msRequestFullscreen) { fullscreenContainer.msRequestFullscreen(); } } else { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } }
+        function popularListaDeMusicas(musicas) { todasAsMusicas = musicas; renderizarLista(todasAsMusicas.sort((a, b) => a.titulo.localeCompare(b.titulo))); selectMusicas.disabled = false; searchInput.disabled = false; }
+        function renderizarLista(musicas) { document.getElementById('resultadosLabel').textContent = `Resultados (${musicas.length} de ${todasAsMusicas.length} músicas):`; selectMusicas.innerHTML = ''; if (musicas.length === 0) { const option = document.createElement('option'); option.textContent = 'Nenhum resultado encontrado'; selectMusicas.appendChild(option); } else { musicas.forEach(musica => adicionarOpcaoMusica(musica)); } buscarCifra(); }
+        function filtrarMusicas() { const termo = searchInput.value.toLowerCase(); const musicasFiltradas = todasAsMusicas.filter(musica => { return musica.titulo.toLowerCase().includes(termo) || musica.artista.toLowerCase().includes(termo); }); renderizarLista(musicasFiltradas); }
+        function adicionarOpcaoMusica(musica) { const option = document.createElement('option'); option.value = musica.id; option.textContent = `${musica.titulo} - ${musica.artista}`; selectMusicas.appendChild(option); }
+        function onSaveSuccess(response) { const statusSalvar = document.getElementById('status-salvar'); if (response.status === "sucesso") { statusSalvar.style.color = 'green'; statusSalvar.textContent = 'Cifra adicionada com sucesso!'; todasAsMusicas.push(response.novaMusica); localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); filtrarMusicas(); setTimeout(() => { document.getElementById('formModal').style.display = 'none'; document.getElementById('novaCifraForm').reset(); statusSalvar.innerHTML = ''; document.getElementById('btnSalvar').disabled = false; }, 2000); } else { onSaveFailure({ message: response.mensagem || 'Erro desconhecido.' }); } }
+        function onSaveFailure(error) { const statusSalvar = document.getElementById('status-salvar'); statusSalvar.style.color = 'red'; statusSalvar.textContent = `Erro ao salvar: ${error.message}`; document.getElementById('btnSalvar').disabled = false; }
+        function mostrarCifra(data) { displayCifra.innerHTML = ''; displayCifra.classList.remove('loading'); try { const cifraArray = JSON.parse(data.cifra); const regexAcorde = /\b[A-G](?:#|b)?(?:m|maj|dim|sus|aug|add|M|m7|M7|m9|m11|m13)?[0-9#b]*(?:\([0-9#b,]+\))?(?:\/[A-G](?:#|b)?)?\b/g; cifraArray.forEach(item => { const linhaDiv = document.createElement('div'); linhaDiv.className = 'cifra-linha'; const acordesDiv = document.createElement('div'); acordesDiv.className = 'acordes'; const acordesComEspacos = (item.acordes || ' ').replace(/ /g, '&nbsp;'); const acordesFormatados = acordesComEspacos.replace(regexAcorde, '<span class="acorde">$&</span>'); acordesDiv.innerHTML = acordesFormatados; const letraDiv = document.createElement('div'); letraDiv.className = 'letra'; letraDiv.textContent = item.letra || ' '; linhaDiv.appendChild(acordesDiv); linhaDiv.appendChild(letraDiv); displayCifra.appendChild(linhaDiv); }); } catch (e) { displayCifra.textContent = "Erro: A cifra não está no formato JSON correto."; } }
+        function tratarErro(error) { console.error(error); displayCifra.textContent = `Ocorreu um erro: ${error.message}`; }
+        selectMusicas.addEventListener('change', buscarCifra);
+        searchInput.addEventListener('input', filtrarMusicas);
+        playPauseBtn.addEventListener('click', () => { if (isScrolling) { pauseScroll(); } else { startScroll(); } });
+        stopBtn.addEventListener('click', stopScroll);
+        speedSlider.addEventListener('change', () => { if (isScrolling) { pauseScroll(); startScroll(); } });
+        fullscreenBtn.addEventListener('click', toggleFullScreen);
+        document.getElementById('openModalBtn').onclick = () => { document.getElementById('formModal').style.display = 'block'; };
+        document.querySelector('#formModal .close-button').onclick = () => { document.getElementById('formModal').style.display = 'none'; document.getElementById('novaCifraForm').reset(); document.getElementById('status-salvar').innerHTML = ''; };
+        document.getElementById('openHelpBtn').onclick = () => { document.getElementById('helpModal').style.display = 'block'; document.getElementById('syncStatus').textContent = ''; document.getElementById('syncAllBtn').disabled = false; };
+        document.querySelector('#helpModal .close-button').onclick = () => { document.getElementById('helpModal').style.display = 'none'; };
+        window.onclick = (event) => { const formModal = document.getElementById('formModal'); const helpModal = document.getElementById('helpModal'); if (event.target == formModal) { formModal.style.display = 'none'; document.getElementById('novaCifraForm').reset(); document.getElementById('status-salvar').innerHTML = ''; } if (event.target == helpModal) { helpModal.style.display = 'none'; } };
+        document.getElementById('syncAllBtn').addEventListener('click', syncAllCifras);
+    </script>
 </body>
 </html>
