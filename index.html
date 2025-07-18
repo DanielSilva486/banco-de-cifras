@@ -64,9 +64,7 @@
                     <img src="https://i.ibb.co/S4yWz8RM/Violao-Azul.png" alt="Ícone de Violão">
                     <h1>Meu Banco de <span>Cifras</span></h1>
                 </div>
-                <p class="subtitle">
-                    "Cantai ao Senhor com harpa, com harpa e voz de canto. Com trombetas e som de buzina, exultai perante o Rei, o Senhor." Salmos 98:4-6
-                </p>
+                <p class="subtitle">"Cantai ao Senhor com harpa, com harpa e voz de canto. Com trombetas e som de buzina, exultai perante o Rei, o Senhor." Salmos 98:4-6</p>
             </div>
             <button id="openModalBtn" class="btn-abrir-modal">Adicionar Nova Cifra</button>
         </div>
@@ -107,26 +105,18 @@
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2>Ajuda / Sobre o Aplicativo</h2>
-            <p>Bem-vindo ao seu Banco de Cifras pessoal! Este aplicativo foi desenvolvido para que você possa guardar e acessar suas cifras de forma rápida e fácil.</p>
-            <p><b>Como funciona:</b></p>
-            <ul>
-                <li>Use a <b>barra de busca</b> para filtrar as músicas por título ou artista.</li>
-                <li>Clique em <b>"Adicionar Nova Cifra"</b> para salvar uma nova música na sua planilha do Google Sheets.</li>
-                <li>O sistema formata os acordes automaticamente para melhor visualização.</li>
-            </ul>
-            <p><b>Dica:</b> Você pode usar este aplicativo para guardar apenas textos e letras de música, sem as cifras. Basta deixar a linha dos acordes em branco ao adicionar.</p>
-            <hr>
-            <p>Este é um sistema em versão de testes (DEMO 1.0). Se você tiver alguma sugestão ou encontrar algum problema, ficarei feliz em receber seu feedback através do Instagram. Obrigado por usar!</p>
+            <p>Bem-vindo ao seu Banco de Cifras pessoal!...</p>
         </div>
     </div>
     <footer>
         <a href="https://www.instagram.com/danielsoucristao/" target="_blank" class="footer-link">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9 26.3 26.2 58 34.4 93.9 36.2 37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M224.1 141c-63.6 0...z"/></svg>
             <span>Daniel Silva</span>
         </a>
         <span>Versão DEMO 1.0</span>
         <button id="openHelpBtn">Ajuda</button>
     </footer>
+
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSV-Fzdw7ne7ZDIpN9ysA6I7PNwMAiTBrXKVXDk1uroCqzWgt4MsliN7RTUG9kTBBx/exec";
         const selectMusicas = document.getElementById('musicas-select');
@@ -140,6 +130,7 @@
         const speedSlider = document.getElementById('speedSlider');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const fullscreenContainer = document.getElementById('fullscreen-container');
+
         document.addEventListener('DOMContentLoaded', () => {
             const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache');
             if (cifrasEmCache) {
@@ -154,17 +145,16 @@
                     if (data && Array.isArray(data)) {
                         localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data));
                         popularListaDeMusicas(data);
-                    } else if (!cifrasEmCache) {
-                         tratarErro({ message: "Não foi possível carregar as cifras." });
                     }
                 })
                 .catch(error => {
                     console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error);
-                    if (!cifrasEmCache) {
-                        tratarErro(error);
-                    }
                 });
         });
+
+        // =============================================================
+        // FUNÇÃO buscarCifra() ATUALIZADA PARA LÓGICA OFFLINE
+        // =============================================================
         function buscarCifra() {
             stopScroll();
             const musicaId = selectMusicas.value;
@@ -173,56 +163,68 @@
                 displayCifra.classList.add('loading');
                 return;
             }
+
+            const musica = todasAsMusicas.find(m => m.id === musicaId);
+
+            if (musica && musica.cifra) {
+                mostrarCifra(musica);
+                return;
+            }
+
             displayCifra.innerHTML = "Carregando cifra...";
             displayCifra.classList.add('loading');
+            
             fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`)
                 .then(response => response.json())
-                .then(data => mostrarCifra(data))
-                .catch(error => tratarErro(error));
-        }
-        document.getElementById('novaCifraForm').onsubmit = (event) => {
-            event.preventDefault();
-            const statusSalvar = document.getElementById('status-salvar');
-            const btnSalvar = document.getElementById('btnSalvar');
-            const dadosFormulario = {
-                titulo: document.getElementById('inputTitulo').value,
-                artista: document.getElementById('inputArtista').value,
-                cifraBruta: document.getElementById('inputCifraBruta').value
-            };
-            btnSalvar.disabled = true;
-            statusSalvar.textContent = 'Salvando...';
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(dadosFormulario),
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            });
-            setTimeout(() => {
-                onSaveSuccess({ status: 'sucesso', novaMusica: { id: `${dadosFormulario.titulo} - ${dadosFormulario.artista}`, titulo: dadosFormulario.titulo, artista: dadosFormulario.artista } });
-                fetch(SCRIPT_URL + "?action=getMusicas").then(res => res.json()).then(data => {
-                    if (data && Array.isArray(data)) {
-                        localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data));
-                        popularListaDeMusicas(data);
+                .then(data => {
+                    if (musica) {
+                        musica.cifra = data.cifra; 
+                        localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas));
                     }
+                    mostrarCifra(data);
+                })
+                .catch(error => {
+                    tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." });
                 });
-            }, 2500);
-        };
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                  .then(reg => console.log('Service Worker registrado.'))
-                  .catch(err => console.error('Erro no registro do Service Worker:', err));
-            });
         }
+        
+        // =============================================================
+        // FUNÇÃO onSaveSuccess() ATUALIZADA PARA CACHE OFFLINE
+        // =============================================================
+        function onSaveSuccess(response) {
+            const statusSalvar = document.getElementById('status-salvar');
+            if (response.status === "sucesso") {
+                statusSalvar.style.color = 'green';
+                statusSalvar.textContent = 'Cifra adicionada com sucesso!';
+                
+                // Adiciona a nova música ao array em memória e ATUALIZA O CACHE LOCAL
+                todasAsMusicas.push(response.novaMusica);
+                localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas));
+                
+                filtrarMusicas(); // Re-renderiza a lista com a nova música
+                
+                setTimeout(() => {
+                    document.getElementById('formModal').style.display = 'none';
+                    document.getElementById('novaCifraForm').reset();
+                    statusSalvar.innerHTML = '';
+                    document.getElementById('btnSalvar').disabled = false;
+                }, 2000);
+            } else {
+                onSaveFailure({ message: response.mensagem || 'Erro desconhecido.' });
+            }
+        }
+
+        // --- O RESTANTE DO SCRIPT ---
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/service-worker.js').then(reg => console.log('SW ok')).catch(err => console.error('SW falhou:', err)); }); }
+        document.getElementById('novaCifraForm').onsubmit = (event) => { event.preventDefault(); const statusSalvar = document.getElementById('status-salvar'); const btnSalvar = document.getElementById('btnSalvar'); const dadosFormulario = { titulo: document.getElementById('inputTitulo').value, artista: document.getElementById('inputArtista').value, cifraBruta: document.getElementById('inputCifraBruta').value }; btnSalvar.disabled = true; statusSalvar.textContent = 'Salvando...'; fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(dadosFormulario) }).then(response => response.json()).then(data => { if (data.status === 'sucesso') { onSaveSuccess(data); } else { onSaveFailure({ message: data.mensagem || 'Erro desconhecido.' }); } }).catch(error => onSaveFailure(error)); };
         function startScroll() { if (displayCifra.scrollHeight <= displayCifra.clientHeight) return; const speed = speedSlider.value; const intervalTime = 150 - (speed * 10); scrollInterval = setInterval(() => { if (displayCifra.scrollTop + displayCifra.clientHeight >= displayCifra.scrollHeight) { pauseScroll(); } else { displayCifra.scrollTop += 1; } }, intervalTime); playPauseBtn.innerHTML = '⏸️'; isScrolling = true; }
         function pauseScroll() { clearInterval(scrollInterval); playPauseBtn.innerHTML = '▶️'; isScrolling = false; }
         function stopScroll() { clearInterval(scrollInterval); scrollInterval = null; displayCifra.scrollTop = 0; playPauseBtn.innerHTML = '▶️'; isScrolling = false; }
         function toggleFullScreen() { if (!document.fullscreenElement && !document.webkitFullscreenElement) { if (fullscreenContainer.requestFullscreen) { fullscreenContainer.requestFullscreen(); } else if (fullscreenContainer.webkitRequestFullscreen) { fullscreenContainer.webkitRequestFullscreen(); } else if (fullscreenContainer.msRequestFullscreen) { fullscreenContainer.msRequestFullscreen(); } } else { if (document.exitFullscreen) { document.exitFullscreen(); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } } }
         function popularListaDeMusicas(musicas) { todasAsMusicas = musicas; renderizarLista(todasAsMusicas.sort((a, b) => a.titulo.localeCompare(b.titulo))); selectMusicas.disabled = false; searchInput.disabled = false; }
         function renderizarLista(musicas) { document.getElementById('resultadosLabel').textContent = `Resultados (${musicas.length} de ${todasAsMusicas.length} músicas):`; selectMusicas.innerHTML = ''; if (musicas.length === 0) { const option = document.createElement('option'); option.textContent = 'Nenhum resultado encontrado'; selectMusicas.appendChild(option); } else { musicas.forEach(musica => adicionarOpcaoMusica(musica)); } buscarCifra(); }
-        function filtrarMusicas() { const termo = searchInput.value.toLowerCase(); const musicasFiltradas = todasAsMusicas.filter(musica => { return musica.titulo.toLowerCase().includes(term) || musica.artista.toLowerCase().includes(term); }); renderizarLista(musicasFiltradas); }
+        function filtrarMusicas() { const termo = searchInput.value.toLowerCase(); const musicasFiltradas = todasAsMusicas.filter(musica => { return musica.titulo.toLowerCase().includes(termo) || musica.artista.toLowerCase().includes(termo); }); renderizarLista(musicasFiltradas); }
         function adicionarOpcaoMusica(musica) { const option = document.createElement('option'); option.value = musica.id; option.textContent = `${musica.titulo} - ${musica.artista}`; selectMusicas.appendChild(option); }
-        function onSaveSuccess(response) { const statusSalvar = document.getElementById('status-salvar'); if (response.status === "sucesso") { statusSalvar.style.color = 'green'; statusSalvar.textContent = 'Cifra adicionada com sucesso!'; todasAsMusicas.push(response.novaMusica); filtrarMusicas(); setTimeout(() => { document.getElementById('formModal').style.display = 'none'; document.getElementById('novaCifraForm').reset(); statusSalvar.innerHTML = ''; document.getElementById('btnSalvar').disabled = false; }, 2000); } else { onSaveFailure({ message: response.mensagem || 'Erro desconhecido.' }); } }
         function onSaveFailure(error) { const statusSalvar = document.getElementById('status-salvar'); statusSalvar.style.color = 'red'; statusSalvar.textContent = `Erro ao salvar: ${error.message}`; document.getElementById('btnSalvar').disabled = false; }
         function mostrarCifra(data) { displayCifra.innerHTML = ''; displayCifra.classList.remove('loading'); try { const cifraArray = JSON.parse(data.cifra); const regexAcorde = /\b[A-G](?:#|b)?(?:m|maj|dim|sus|aug|add|M|m7|M7|m9|m11|m13)?[0-9#b]*(?:\([0-9#b,]+\))?(?:\/[A-G](?:#|b)?)?\b/g; cifraArray.forEach(item => { const linhaDiv = document.createElement('div'); linhaDiv.className = 'cifra-linha'; const acordesDiv = document.createElement('div'); acordesDiv.className = 'acordes'; const acordesComEspacos = (item.acordes || ' ').replace(/ /g, '&nbsp;'); const acordesFormatados = acordesComEspacos.replace(regexAcorde, '<span class="acorde">$&</span>'); acordesDiv.innerHTML = acordesFormatados; const letraDiv = document.createElement('div'); letraDiv.className = 'letra'; letraDiv.textContent = item.letra || ' '; linhaDiv.appendChild(acordesDiv); linhaDiv.appendChild(letraDiv); displayCifra.appendChild(linhaDiv); }); } catch (e) { displayCifra.textContent = "Erro: A cifra não está no formato JSON correto."; } }
         function tratarErro(error) { console.error(error); displayCifra.textContent = `Ocorreu um erro: ${error.message}`; }
