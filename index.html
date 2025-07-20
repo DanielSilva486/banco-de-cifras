@@ -14,31 +14,13 @@
         .title-group img { width: 90px; height: 90px; border-radius: 20px; object-fit: cover; }
         h1 { color: #ffffff; margin: 0; }
         h1 span { color: #3498db; }
-        .subtitle { font-size: 0.9em; font-family: 'Georgia', serif; color: #aaa; margin: 8px 0 0 0; padding-left: 105px; /* Ajustado para imagem de 90px + 15px de gap */ max-width: 450px; line-height: 1.4; }
+        .subtitle { font-size: 0.9em; font-family: 'Georgia', serif; color: #aaa; margin: 8px 0 0 0; padding-left: 105px; max-width: 450px; line-height: 1.4; }
         .header-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
-        
-        /* ESTILO UNIFICADO PARA OS BOTÕES DO CABEÇALHO */
-        .btn-header {
-            border: none;
-            padding: 10px 15px;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 5px;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: white;
-            min-width: 180px; /* Garante uma largura mínima para ambos */
-            box-sizing: border-box;
-        }
+        .btn-header { border: none; padding: 10px 15px; font-size: 14px; font-weight: 600; border-radius: 5px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; min-width: 180px; box-sizing: border-box; }
         .btn-header svg { height: 1em; fill: white; }
         .btn-add { background-color: #27ae60; }
         .btn-sync { background-color: #3498db; }
         .btn-sync:disabled { background-color: #555; cursor: not-allowed; opacity: 0.7; }
-        
         label { font-weight: 600; color: #bbb; display: block; margin-bottom: 5px; }
         select, input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border-radius: 5px; border: 1px solid #444; margin-top: 8px; box-sizing: border-box; background-color: #333; color: #fff; }
         .search-group { margin-bottom: 20px; }
@@ -50,7 +32,7 @@
         .letra { font-family: 'Roboto Mono', 'Courier New', Courier, monospace; color: #e0e0e0; font-size: 1.1em; line-height: 1.3; margin-top: 0; margin-bottom: 0; }
         .loading { text-align: center; padding: 20px; font-style: italic; color: #888; }
         .scroll-controls { display: flex; align-items: center; gap: 15px; padding: 10px; background-color: #2a2a2a; border-radius: 5px; margin-top: 20px; border: 1px solid #444; }
-        .scroll-controls button { background-color: #555; color: white; border: none; border-radius: 0px; padding: 8px 12px; cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+        .scroll-controls button { background-color: #555; color: white; border: none; border-radius: 5px; padding: 8px 12px; cursor: pointer; font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center; }
         .scroll-controls button:hover { background-color: #777; }
         .scroll-controls label { margin: 0; color: #bbb; }
         .scroll-controls input[type="range"] { flex-grow: 1; cursor: pointer; }
@@ -70,7 +52,7 @@
         .modal-content textarea { width: 100%; height: 200px; box-sizing: border-box; font-family: monospace; font-size: 14px; padding: 10px; border: 1px solid #444; border-radius: 4px; background-color: #333; color: #fff; }
         .btn-salvar { font-size: 16px; padding: 12px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; width: 100%; }
         .btn-salvar:disabled { background-color: #555; }
-        #status-salvar { margin-top: 15px; text-align: center; font-weight: bold; }
+        #status-salvar, #syncStatus { margin-top: 15px; text-align: center; font-weight: bold; }
         .close-button { position: absolute; top: 10px; right: 20px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
         footer { position: fixed; left: 0; bottom: 0; width: 100%; background-color: #1e1e1e; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 10px 25px; box-sizing: border-box; font-size: 0.9em; color: #87CEFA; }
         .footer-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #87CEFA; transition: opacity 0.3s; }
@@ -126,7 +108,7 @@
             <div class="form-group"><label for="inputTitulo">Nome da Música:</label><input type="text" id="inputTitulo" required></div>
             <div class="form-group"><label for="inputArtista">Artista:</label><input type="text" id="inputArtista" required></div>
             <div class="form-group"><label for="inputCifraBruta">Cole a cifra completa aqui:</label><textarea id="inputCifraBruta" required placeholder="Cole aqui a cifra..."></textarea></div>
-            <button type="submit" id="btnSalvar" class="btn-salvar">Salvar na Planilha</button>
+            <button type="submit" id="btnSalvar" class="btn-salvar">Salvar Nova Cifra</button>
             <div id="status-salvar"></div>
         </form>
     </div>
@@ -148,6 +130,7 @@
         <span>Versão DEMO 1.0</span>
         <button id="openHelpBtn">Ajuda</button>
     </footer>
+
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzGw9EriMhR7QpALZzovkDch5TYH4MXyllogIWjWKbSNM2S4Jw-BT7UPEpQMzri-Nlgvw/exec";
         const selectMusicas = document.getElementById('musicas-select');
@@ -208,7 +191,6 @@
             syncAllBtn.disabled = false;
             setTimeout(() => { renderizarLista(todasAsMusicas); }, 2000);
         }
-
         document.addEventListener('DOMContentLoaded', () => { const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache'); if (cifrasEmCache) { popularListaDeMusicas(JSON.parse(cifrasEmCache)); } fetch(SCRIPT_URL + "?action=getMusicas").then(response => { if (!response.ok) throw new Error("Erro na rede ao buscar dados."); return response.json(); }).then(data => { if (data && Array.isArray(data)) { localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data)); popularListaDeMusicas(data); } }).catch(error => { console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error); }); });
         function buscarCifra() { stopScroll(); const musicaId = selectMusicas.value; if (!musicaId || selectMusicas.options[0].textContent === 'Nenhum resultado encontrado') { displayCifra.innerHTML = "Selecione uma música na lista de resultados."; displayCifra.classList.add('loading'); return; } const musica = todasAsMusicas.find(m => m.id === musicaId); if (musica && musica.cifra) { mostrarCifra(musica); return; } displayCifra.innerHTML = "Carregando cifra..."; displayCifra.classList.add('loading'); fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`).then(response => response.json()).then(data => { if (musica) { musica.cifra = data.cifra; localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); } mostrarCifra(data); }).catch(error => { tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." }); }); }
         document.getElementById('novaCifraForm').onsubmit = (event) => { event.preventDefault(); const statusSalvar = document.getElementById('status-salvar'); const btnSalvar = document.getElementById('btnSalvar'); const dadosFormulario = { titulo: document.getElementById('inputTitulo').value, artista: document.getElementById('inputArtista').value, cifraBruta: document.getElementById('inputCifraBruta').value }; btnSalvar.disabled = true; statusSalvar.textContent = 'Salvando...'; fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(dadosFormulario) }).then(response => response.json()).then(data => { if (data.status === 'sucesso') { onSaveSuccess(data); } else { onSaveFailure({ message: data.mensagem || 'Erro desconhecido.' }); } }).catch(error => onSaveFailure(error)); };
@@ -235,8 +217,8 @@
         document.querySelector('#formModal .close-button').onclick = () => { document.getElementById('formModal').style.display = 'none'; document.getElementById('novaCifraForm').reset(); document.getElementById('status-salvar').innerHTML = ''; };
         document.getElementById('openHelpBtn').onclick = () => { document.getElementById('helpModal').style.display = 'block'; document.getElementById('syncStatus').textContent = ''; document.getElementById('syncAllBtn').disabled = false; };
         document.querySelector('#helpModal .close-button').onclick = () => { document.getElementById('helpModal').style.display = 'none'; };
+        syncAllBtn.addEventListener('click', syncAllCifras);
         window.onclick = (event) => { const formModal = document.getElementById('formModal'); const helpModal = document.getElementById('helpModal'); if (event.target == formModal) { formModal.style.display = 'none'; document.getElementById('novaCifraForm').reset(); document.getElementById('status-salvar').innerHTML = ''; } if (event.target == helpModal) { helpModal.style.display = 'none'; } };
-        document.getElementById('syncAllBtn').addEventListener('click', syncAllCifras);
     </script>
 </body>
 </html>
