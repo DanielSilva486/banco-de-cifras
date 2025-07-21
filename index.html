@@ -49,7 +49,19 @@
         .modal-content h2 { margin: 0; color: #fff; }
         .modal-content p, .modal-content li { line-height: 1.6; color: #ccc; }
         .modal-content .form-group { margin-bottom: 15px; }
-        .modal-content textarea { width: 100%; height: 200px; box-sizing: border-box; font-family: monospace; font-size: 14px; padding: 10px; border: 1px solid #444; border-radius: 4px; background-color: #333; color: #fff; }
+        .modal-content textarea {
+            width: 100%;
+            height: 200px;
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+            resize: none; /* ESTA LINHA FOI ADICIONADA */
+        }
         .btn-salvar { font-size: 16px; padding: 12px 20px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; width: 100%; }
         .btn-salvar:disabled { background-color: #555; }
         #status-salvar, #syncStatus { margin-top: 15px; text-align: center; font-weight: bold; }
@@ -115,6 +127,7 @@
                     Li e concordo com os <a href="termos.html" target="_blank" style="color: #3498db; text-decoration: underline;">Termos de Uso</a> e assumo total responsabilidade pelo conteúdo.
                 </label>
             </div>
+
             <button type="submit" id="btnSalvar" class="btn-salvar">Salvar Nova Cifra</button>
             <div id="status-salvar"></div>
         </form>
@@ -214,17 +227,14 @@
         document.addEventListener('DOMContentLoaded', () => { const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache'); if (cifrasEmCache) { popularListaDeMusicas(JSON.parse(cifrasEmCache)); } fetch(SCRIPT_URL + "?action=getMusicas").then(response => { if (!response.ok) throw new Error("Erro na rede ao buscar dados."); return response.json(); }).then(data => { if (data && Array.isArray(data)) { localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data)); popularListaDeMusicas(data); } }).catch(error => { console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error); }); });
         function buscarCifra() { stopScroll(); const musicaId = selectMusicas.value; if (!musicaId || selectMusicas.options[0].textContent === 'Nenhum resultado encontrado') { displayCifra.innerHTML = "Selecione uma música na lista de resultados."; displayCifra.classList.add('loading'); return; } const musica = todasAsMusicas.find(m => m.id === musicaId); if (musica && musica.cifra) { mostrarCifra(musica); return; } displayCifra.innerHTML = "Carregando cifra..."; displayCifra.classList.add('loading'); fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`).then(response => response.json()).then(data => { if (musica) { musica.cifra = data.cifra; localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); } mostrarCifra(data); }).catch(error => { tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." }); }); }
         
-        // CÓDIGO MODIFICADO PARA O ENVIO DO FORMULÁRIO
         document.getElementById('novaCifraForm').onsubmit = (event) => {
             event.preventDefault();
 
-            // --- Validação dos Termos de Uso ---
             const termosCheckbox = document.getElementById('termos-check');
             if (!termosCheckbox.checked) {
                 alert('Você precisa aceitar os Termos de Uso para poder enviar uma cifra.');
-                return; // Impede o envio do formulário
+                return;
             }
-            // --- Fim da Validação ---
 
             const statusSalvar = document.getElementById('status-salvar');
             const btnSalvar = document.getElementById('btnSalvar');
