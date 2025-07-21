@@ -228,7 +228,6 @@
         document.addEventListener('DOMContentLoaded', () => { const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache'); if (cifrasEmCache) { popularListaDeMusicas(JSON.parse(cifrasEmCache)); } fetch(SCRIPT_URL + "?action=getMusicas").then(response => { if (!response.ok) throw new Error("Erro na rede ao buscar dados."); return response.json(); }).then(data => { if (data && Array.isArray(data)) { localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data)); popularListaDeMusicas(data); } }).catch(error => { console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error); }); });
         function buscarCifra() { stopScroll(); const musicaId = selectMusicas.value; if (!musicaId || selectMusicas.options[0].textContent === 'Nenhum resultado encontrado') { displayCifra.innerHTML = "Selecione uma música na lista de resultados."; displayCifra.classList.add('loading'); return; } const musica = todasAsMusicas.find(m => m.id === musicaId); if (musica && musica.cifra) { mostrarCifra(musica); return; } displayCifra.innerHTML = "Carregando cifra..."; displayCifra.classList.add('loading'); fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`).then(response => response.json()).then(data => { if (musica) { musica.cifra = data.cifra; localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); } mostrarCifra(data); }).catch(error => { tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." }); }); }
         
-        // CÓDIGO MODIFICADO PARA O ENVIO DO FORMULÁRIO
         document.getElementById('novaCifraForm').onsubmit = (event) => {
             event.preventDefault();
 
@@ -241,13 +240,26 @@
             const statusSalvar = document.getElementById('status-salvar');
             const btnSalvar = document.getElementById('btnSalvar');
             
-            // COLETA DOS DADOS DO FORMULÁRIO COM O NOVO CAMPO DE NOME
+            // --- MODIFICAÇÃO: Adiciona o nome do usuário no final da cifra ---
+
+            // 1. Pega os valores originais
+            const nomeUsuario = document.getElementById('inputNomeUsuario').value;
+            const cifraOriginal = document.getElementById('inputCifraBruta').value;
+
+            // 2. Cria o texto de atribuição e junta com a cifra
+            // O "\n\n" cria os dois espaços (quebras de linha) que você pediu
+            const atribuicao = `\n\nAdicionado por: ${nomeUsuario}`;
+            const cifraFinalComAtribuicao = cifraOriginal.trim() + atribuicao;
+
+            // 3. Monta o objeto de dados final para ser enviado
             const dadosFormulario = {
                 titulo: document.getElementById('inputTitulo').value,
                 artista: document.getElementById('inputArtista').value,
-                nomeUsuario: document.getElementById('inputNomeUsuario').value, // NOVO CAMPO
-                cifraBruta: document.getElementById('inputCifraBruta').value
+                nomeUsuario: nomeUsuario, // Ainda enviamos o nome separado para a coluna da planilha
+                cifraBruta: cifraFinalComAtribuicao // Agora enviamos a cifra JÁ COM a atribuição
             };
+
+            // --- FIM DA MODIFICAÇÃO ---
 
             btnSalvar.disabled = true;
             statusSalvar.textContent = 'Salvando...';
