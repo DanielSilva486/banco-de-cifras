@@ -108,6 +108,13 @@
             <div class="form-group"><label for="inputTitulo">Nome da Música:</label><input type="text" id="inputTitulo" required></div>
             <div class="form-group"><label for="inputArtista">Artista:</label><input type="text" id="inputArtista" required></div>
             <div class="form-group"><label for="inputCifraBruta">Cole a cifra completa aqui:</label><textarea id="inputCifraBruta" required placeholder="Cole aqui a cifra..."></textarea></div>
+            
+            <div class="form-group" style="display: flex; align-items: center; gap: 10px; background-color: #333; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                <input type="checkbox" id="termos-check" style="width: auto; height: auto;">
+                <label for="termos-check" style="margin-bottom: 0; font-weight: normal;">
+                    Li e concordo com os <a href="termos.html" target="_blank" style="color: #3498db; text-decoration: underline;">Termos de Uso</a> e assumo total responsabilidade pelo conteúdo.
+                </label>
+            </div>
             <button type="submit" id="btnSalvar" class="btn-salvar">Salvar Nova Cifra</button>
             <div id="status-salvar"></div>
         </form>
@@ -206,7 +213,42 @@
         }
         document.addEventListener('DOMContentLoaded', () => { const cifrasEmCache = localStorage.getItem('bancoDeCifrasCache'); if (cifrasEmCache) { popularListaDeMusicas(JSON.parse(cifrasEmCache)); } fetch(SCRIPT_URL + "?action=getMusicas").then(response => { if (!response.ok) throw new Error("Erro na rede ao buscar dados."); return response.json(); }).then(data => { if (data && Array.isArray(data)) { localStorage.setItem('bancoDeCifrasCache', JSON.stringify(data)); popularListaDeMusicas(data); } }).catch(error => { console.error("Falha ao buscar cifras da internet. Usando cache se disponível.", error); }); });
         function buscarCifra() { stopScroll(); const musicaId = selectMusicas.value; if (!musicaId || selectMusicas.options[0].textContent === 'Nenhum resultado encontrado') { displayCifra.innerHTML = "Selecione uma música na lista de resultados."; displayCifra.classList.add('loading'); return; } const musica = todasAsMusicas.find(m => m.id === musicaId); if (musica && musica.cifra) { mostrarCifra(musica); return; } displayCifra.innerHTML = "Carregando cifra..."; displayCifra.classList.add('loading'); fetch(`${SCRIPT_URL}?action=getCifra&id=${encodeURIComponent(musicaId)}`).then(response => response.json()).then(data => { if (musica) { musica.cifra = data.cifra; localStorage.setItem('bancoDeCifrasCache', JSON.stringify(todasAsMusicas)); } mostrarCifra(data); }).catch(error => { tratarErro({ message: "Você está offline. Esta cifra ainda não foi salva para uso local." }); }); }
-        document.getElementById('novaCifraForm').onsubmit = (event) => { event.preventDefault(); const statusSalvar = document.getElementById('status-salvar'); const btnSalvar = document.getElementById('btnSalvar'); const dadosFormulario = { titulo: document.getElementById('inputTitulo').value, artista: document.getElementById('inputArtista').value, cifraBruta: document.getElementById('inputCifraBruta').value }; btnSalvar.disabled = true; statusSalvar.textContent = 'Salvando...'; fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(dadosFormulario) }).then(response => response.json()).then(data => { if (data.status === 'sucesso') { onSaveSuccess(data); } else { onSaveFailure({ message: data.mensagem || 'Erro desconhecido.' }); } }).catch(error => onSaveFailure(error)); };
+        
+        // CÓDIGO MODIFICADO PARA O ENVIO DO FORMULÁRIO
+        document.getElementById('novaCifraForm').onsubmit = (event) => {
+            event.preventDefault();
+
+            // --- Validação dos Termos de Uso ---
+            const termosCheckbox = document.getElementById('termos-check');
+            if (!termosCheckbox.checked) {
+                alert('Você precisa aceitar os Termos de Uso para poder enviar uma cifra.');
+                return; // Impede o envio do formulário
+            }
+            // --- Fim da Validação ---
+
+            const statusSalvar = document.getElementById('status-salvar');
+            const btnSalvar = document.getElementById('btnSalvar');
+            const dadosFormulario = {
+                titulo: document.getElementById('inputTitulo').value,
+                artista: document.getElementById('inputArtista').value,
+                cifraBruta: document.getElementById('inputCifraBruta').value
+            };
+            btnSalvar.disabled = true;
+            statusSalvar.textContent = 'Salvando...';
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify(dadosFormulario)
+            }).then(response => response.json()).then(data => {
+                if (data.status === 'sucesso') {
+                    onSaveSuccess(data);
+                } else {
+                    onSaveFailure({
+                        message: data.mensagem || 'Erro desconhecido.'
+                    });
+                }
+            }).catch(error => onSaveFailure(error));
+        };
+
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/service-worker.js').then(reg => console.log('SW ok')).catch(err => console.error('SW falhou:', err)); }); }
         function startScroll() { if (displayCifra.scrollHeight <= displayCifra.clientHeight) return; const speed = speedSlider.value; const intervalTime = 150 - (speed * 10); scrollInterval = setInterval(() => { if (displayCifra.scrollTop + displayCifra.clientHeight >= displayCifra.scrollHeight) { pauseScroll(); } else { displayCifra.scrollTop += 1; } }, intervalTime); playPauseBtn.innerHTML = '⏸️'; isScrolling = true; }
         function pauseScroll() { clearInterval(scrollInterval); playPauseBtn.innerHTML = '▶️'; isScrolling = false; }
