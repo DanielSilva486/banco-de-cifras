@@ -16,7 +16,7 @@
         h1 span { color: #3498db; }
         .subtitle { font-size: 0.9em; font-family: 'Georgia', serif; color: #aaa; margin: 8px 0 0 0; padding-left: 105px; max-width: 450px; line-height: 1.4; }
         .header-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
-        .btn-header { border: none; padding: 10px 15px; font-size: 14px; font-weight: 600; border-radius: 5px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; min-width: 180px; box-sizing: border-box; }
+        .btn-header { border: none; padding: 10px 15px; font-size: 14px; font-weight: 600; border-radius: 5px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 8px; color: white;   min-width: 180px; box-sizing: border-box; }
         .btn-header svg { height: 1em; fill:white; }
         .btn-add { background-color: #27ae60; }
         .btn-sync { background-color: #3498db; }
@@ -61,6 +61,68 @@
         #openHelpBtn { background: none; border: none; color: #87CEFA; font-size: 1em; cursor: pointer; text-decoration: underline; }
         .btn-pix { background-color: #ADD8E6; color: #000000; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9em; font-weight: 600; display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .btn-pix svg { fill: #000000; }
+        /* ====== CÓDIGO PARA RESPONSIVIDADE ====== */
+@media (max-width: 650px) {
+    body {
+        padding: 10px; /* Reduz o espaçamento geral em telas pequenas */
+        padding-bottom: 90px; /* Garante espaço para o footer */
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    /* --- Correção do Cabeçalho --- */
+    .header {
+        flex-direction: column; /* Empilha o título e os botões */
+        align-items: stretch;   /* Faz os itens ocuparem a largura toda */
+        gap: 20px;
+    }
+
+    .title-group {
+        flex-direction: column; /* Empilha a imagem e o título */
+        align-items: center;    /* Centraliza eles */
+        text-align: center;
+        gap: 10px;
+    }
+
+    .subtitle {
+        padding-left: 0;        /* Remove o espaçamento extra do subtítulo */
+        max-width: 100%;        /* Permite que ocupe toda a largura */
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .header-actions {
+        flex-direction: row;    /* Coloca os botões lado a lado novamente */
+        width: 100%;
+        gap: 10px;
+    }
+
+    .btn-header {
+        min-width: 0;           /* Remove a largura mínima para ser flexível */
+        flex-grow: 1;           /* Faz os dois botões dividirem o espaço */
+    }
+
+    /* --- Correção dos Controles de Rolagem --- */
+    .scroll-controls {
+        flex-wrap: wrap;        /* Permite que os itens quebrem a linha */
+        justify-content: center;/* Centraliza os itens quando a linha quebra */
+        gap: 10px;
+    }
+
+    .scroll-controls input[type="range"] {
+        min-width: 150px;       /* Garante que a barra de velocidade não fique pequena demais */
+    }
+    
+    /* --- Ajuste do Rodapé --- */
+    footer {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        font-size: 0.8em;
+    }
+}
     </style>
 </head>
 <body>
@@ -74,10 +136,10 @@
                 <p class="subtitle">"Cantai ao Senhor com harpa, com harpa e voz de canto. Com trombetas e som de buzina, exultai perante o Rei, o Senhor." Salmos 98:4-6</p>
             </div>
             <div class="header-actions">
-                <button id="openModalBtn" class="btn-header btn-add">Adicionar Nova Cifra</button>
+                <button id="openModalBtn" class="btn-header btn-add">Adicionar Cifra</button>
                 <button id="syncAllBtn" class="btn-header btn-sync">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path d="M537.6 226.6c4.1-10.7 6.4-22.4 6.4-34.6 0-53-43-96-96-96-19.7 0-38.1 6-53.3 16.2C367 64.2 315.3 32 256 32c-63.6 0-116.4 43.1-131.2 100.2C98.4 128.9 74.5 128 48 128c-26.5 0-48 21.5-48 48s21.5 48 48 48h66.7C101.4 259.9 88 293.4 88 320c0 10.2 1.4 20.2 4.1 29.6-13.8 5.4-23.3 19.3-21.7 34.6 1.6 15.3 15.2 26.8 30.6 26.8H256v32c0 17.7 14.3 32 32 32s32-14.3 32-32V352h64c17.7 0 32-14.3 32-32s-14.3-32-32-32h-64v-32c0-11.2-3.4-21.7-9.4-30.6 30.9-10.9 53.4-40.3 53.4-74.8zM256 224c17.7 0 32-14.3 32-32s-14.3-32-32-32-32 14.3-32 32 14.3 32 32 32z"/></svg>
-                    Sincronizar Offline
+                    Sincr. Offline
                 </button>
             </div>
         </div>
@@ -128,9 +190,7 @@
             <span class="close-button">&times;</span>
             <h2>Ajuda / Sobre o Aplicativo</h2>
             <p>Bem-vindo ao seu Banco de Cifras pessoal! Este aplicativo foi desenvolvido para que você possa guardar e acessar suas cifras de forma rápida e fácil.</p>
-           <p><b>Dica1 de Formatação:</b> Para que os acordes fiquem exatamente em cima das sílabas corretas, recomendamos usar uma fonte de "largura fixa" (monoespaçada) ao criar a cifra. As fontes Courier ou Courier New são ideais para isso.
-            </p>
-            <p><b>Dica 2:</b> Para garantir que todas as suas cifras fiquem disponíveis sem internet, use o botão "Sincronizar Offline" na tela principal.</p>
+            <p><b>Dica:</b> Para garantir que todas as suas cifras fiquem disponíveis sem internet, use o botão "Sincronizar Offline" na tela principal.</p>
             <hr style="border-color: #444; margin: 20px 0;">
             
             <div class="copyright-notice" style="margin-bottom: 20px;">
